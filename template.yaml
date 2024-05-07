@@ -20,7 +20,7 @@ Resources:
       
       CodeUri: StoreProductsGetFunction
       Handler: com.networknt.market.handler.App::handleRequest
-      Runtime: provided
+      Runtime: provided.al2023
       MemorySize: 512
       FunctionName: StoreProductsGetFunction
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
@@ -42,7 +42,7 @@ Resources:
       
       CodeUri: StoreProductsPostFunction
       Handler: com.networknt.market.handler.App::handleRequest
-      Runtime: provided
+      Runtime: provided.al2023
       MemorySize: 512
       FunctionName: StoreProductsPostFunction
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object

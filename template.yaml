@@ -2,16 +2,51 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  market
+  com.networknt.market-1.0.1
 
-  Sample SAM Template for market
+  Sample SAM Template for com.networknt.market-1.0.1
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 20
 
+Parameters:
+  ParamStage:
+    Type: String
+    Description: Deployment stage.
+    Default: test
+  ParamServiceId:
+    Type: String
+    Description: Unique service id for your application
+    Default: com.networknt.market-1.0.1
+
 Resources:
+  MarketFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: market-function-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action:
+            - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DirectInvokeMarketLambda
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              Action:
+                - lambda:InvokeFunction
+                - lambda:InvokeAsync
+              Effect: Allow
+              Resource: "*"
+
   
   
   StoreProductsGetFunction:
@@ -23,17 +58,11 @@ Resources:
       Runtime: provided.al2023
       MemorySize: 512
       FunctionName: StoreProductsGetFunction
+      Role: !Sub ${MarketFunctionRole.Arn}
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
           PARAM1: VALUE
       
-      Events:
-        StoreProductsGet:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /{store}/products
-            Method: GET
-            
     
   
   StoreProductsPostFunction:
@@ -45,17 +74,79 @@ Resources:
       Runtime: provided.al2023
       MemorySize: 512
       FunctionName: StoreProductsPostFunction
+      Role: !Sub ${MarketFunctionRole.Arn}
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
           PARAM1: VALUE
       
+    
+  
+
+
+  MarketNativeLambdaProxyFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: s3://networknt-native-lambda-jar-for-deployment-reference/lambda-native-2.1.34-SNAPSHOT.jar
+      Handler: com.networknt.aws.lambda.proxy.LambdaProxy::handleRequest
+      Layers:
+        - !Ref MarketConfigLayer
+      Runtime: java11
+      MemorySize: 512
+      FunctionName: MarketNativeLambdaProxyFunction
+      Role: !Sub ${MarketFunctionRole.Arn}
+      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+        Variables:
+          JAVA_TOOL_OPTIONS: -Dlight-4j-config-dir=/opt
+
       Events:
+        MarketHealthGet:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /health
+            Method: GET
+        MarketAdmHealthGet:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /adm/health
+            Method: GET
+        MarketAdmServerInfoGet:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /adm/server/info
+            Method: GET
+        MarketAdmLoggerGet:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /adm/logger
+            Method: GET
+        MarketAdmLoggerPost:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /adm/logger
+            Method: POST
+        
+        StoreProductsGet:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /{store}/products
+            Method: GET
+        
         StoreProductsPost:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /{store}/products
             Method: POST
-            
-    
-  
+        
+  MarketConfigLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: sam-app-market-config-layer
+      Description: Configuration for the market
+      ContentUri: config/
+      CompatibleRuntimes:
+        - java11
+        - java17
+      LicenseInfo: 'MIT'
+      RetentionPolicy: Retain
+
   

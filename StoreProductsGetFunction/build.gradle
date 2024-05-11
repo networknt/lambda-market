@@ -19,6 +19,7 @@ dependencies {
     implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     implementation "com.amazonaws:aws-lambda-java-core:$lambdaCoreVersion"
     implementation "com.amazonaws:aws-lambda-java-events:$lambdaEventsVersion"
+    implementation "software.amazon.awssdk:lambda:$lambdaAwsSdkVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }

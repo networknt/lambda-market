@@ -4,11 +4,18 @@ package com.networknt.market.handler;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
+import com.networknt.config.JsonMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.lambda.LambdaClient;
+import software.amazon.awssdk.services.lambda.model.InvokeRequest;
+import software.amazon.awssdk.services.lambda.model.LambdaException;
 
 /**
  * This is the generated BusinessHandler for developers to write business logic for the Lambda function. Once this file
@@ -16,14 +23,51 @@ import java.util.Map;
  */
 public class BusinessHandler {
     private static final Logger logger = LoggerFactory.getLogger(BusinessHandler.class);
+    private static final String FUNCTION_NAME = "MarketNativeLambdaProxyFunction";
+    private static final String REGION = "us-east-2";
+
+    private final LambdaClient client;
+
+    private BusinessHandler() {
+        var builder = LambdaClient.builder().region(Region.of(REGION));
+        client = builder.build();
+    }
+
+    private static final class InstanceHolder {
+        private static final BusinessHandler INSTANCE = new BusinessHandler();
+    }
+
+    public static BusinessHandler getInstance() {
+        return InstanceHolder.INSTANCE;
+    }
+
     public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input, final Context context) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
-        APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent().withHeaders(headers);
-        String output = "";
-        output = "[{\"id\":1,\"name\":\"catten\",\"tag\":\"cat\"},{\"id\":2,\"name\":\"doggy\",\"tag\":\"dog\"}]";
-        response.withStatusCode(200)
-                .withBody(output);
-        return response;
+
+        APIGatewayProxyRequestEvent petstoreRequestEvent = new APIGatewayProxyRequestEvent();
+        petstoreRequestEvent.setHeaders(headers);
+        petstoreRequestEvent.setHttpMethod("GET");
+        petstoreRequestEvent.setPath("/v1/pets");
+
+        String petstoreResponse = null;
+        try {
+            var payload = SdkBytes.fromUtf8String(JsonMapper.toJson(petstoreRequestEvent));
+            var request = InvokeRequest.builder()
+                    .functionName(FUNCTION_NAME)
+                    .payload(payload)
+                    .build();
+            var res = client.invoke(request);
+            if (logger.isDebugEnabled()) {
+                logger.debug("lambda call function error:{}", res.functionError());
+                logger.debug("lambda logger result:{}", res.logResult());
+                logger.debug("lambda call status:{}", res.statusCode());
+            }
+            petstoreResponse = res.payload().asUtf8String();
+        } catch (LambdaException e) {
+            logger.error("LambdaException", e);
+        }
+        APIGatewayProxyResponseEvent responseEvent = JsonMapper.fromJson(petstoreResponse, APIGatewayProxyResponseEvent.class);;
+        return responseEvent;
     }
 }

@@ -49,10 +49,13 @@ public class BusinessHandler {
         petstoreRequestEvent.setHeaders(headers);
         petstoreRequestEvent.setHttpMethod("GET");
         petstoreRequestEvent.setPath("/v1/pets");
+        petstoreRequestEvent.setQueryStringParameters(new HashMap<>());
+        String requestString = JsonMapper.toJson(petstoreRequestEvent);
+        if(logger.isTraceEnabled()) logger.trace("petstoreRequestEvent = {} to functionName {}", requestString, FUNCTION_NAME);
 
         String petstoreResponse = null;
         try {
-            var payload = SdkBytes.fromUtf8String(JsonMapper.toJson(petstoreRequestEvent));
+            var payload = SdkBytes.fromUtf8String(requestString);
             var request = InvokeRequest.builder()
                     .functionName(FUNCTION_NAME)
                     .payload(payload)

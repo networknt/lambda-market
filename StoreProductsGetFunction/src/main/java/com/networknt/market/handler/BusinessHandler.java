@@ -26,11 +26,10 @@ public class BusinessHandler {
     private static final String FUNCTION_NAME = "MarketNativeLambdaProxyFunction";
     private static final String REGION = "us-east-2";
 
-    private final LambdaClient client;
+    private final LambdaClient lambdaClient;
 
     private BusinessHandler() {
-        var builder = LambdaClient.builder().region(Region.of(REGION));
-        client = builder.build();
+        lambdaClient = DependencyFactory.lambdaClient(Region.of(REGION));
     }
 
     private static final class InstanceHolder {
@@ -60,7 +59,7 @@ public class BusinessHandler {
                     .functionName(FUNCTION_NAME)
                     .payload(payload)
                     .build();
-            var res = client.invoke(request);
+            var res = lambdaClient.invoke(request);
             if (logger.isDebugEnabled()) {
                 logger.debug("lambda call function error:{}", res.functionError());
                 logger.debug("lambda logger result:{}", res.logResult());

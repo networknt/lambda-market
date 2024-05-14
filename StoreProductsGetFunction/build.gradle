@@ -11,6 +11,10 @@ repositories {
         url 'https://oss.sonatype.org/content/repositories/snapshots/'
     }
 }
+configurations.all {
+    exclude group:"software.amazon.awssdk", module: "netty-nio-client"
+    exclude group:"software.amazon.awssdk", module: "apache-client"
+}
 
 dependencies {
     implementation "com.networknt:custom-runtime:$light4jVersion"
@@ -20,6 +24,7 @@ dependencies {
     implementation "com.amazonaws:aws-lambda-java-core:$lambdaCoreVersion"
     implementation "com.amazonaws:aws-lambda-java-events:$lambdaEventsVersion"
     implementation "software.amazon.awssdk:lambda:$lambdaAwsSdkVersion"
+    implementation "software.amazon.awssdk:url-connection-client:$lambdaAwsSdkVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }

@@ -10,7 +10,18 @@ lambda-proxy.functions:
 
   /{store}/products@post: StoreProductsPostFunction
 
+# lambda-router.yml
+lambda-router.enabled: true
+lambda-router.region: us-east-2
+lambda-router.functions:
+  /v1/pets@get: PetstoreNativeLambdaProxyFunction
 
+  /v1/pets@post: PetstoreNativeLambdaProxyFunction
+
+  /v1/pets/{petId}@get: PetstoreNativeLambdaProxyFunction
+
+  /v1/pets/{petId}@delete: PetstoreNativeLambdaProxyFunction
+  
 # service.yml
 service.singletons:
   - com.networknt.cache.CacheManager:

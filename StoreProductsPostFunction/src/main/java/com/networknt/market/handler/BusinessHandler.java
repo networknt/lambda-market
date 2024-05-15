@@ -35,6 +35,7 @@ public class BusinessHandler {
         String output = "";
         output = "{}";
         response.withStatusCode(200)
+                .withIsBase64Encoded(false)
                 .withBody(output);
         return response;
     }

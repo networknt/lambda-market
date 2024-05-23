@@ -48,7 +48,7 @@ public class BusinessHandler {
         APIGatewayProxyRequestEvent petstoreRequestEvent = new APIGatewayProxyRequestEvent();
         petstoreRequestEvent.setHeaders(headers);
         petstoreRequestEvent.setHttpMethod("GET");
-        petstoreRequestEvent.setPath("/Stage/v1/pets");
+        petstoreRequestEvent.setPath("/v1/pets");
         petstoreRequestEvent.setQueryStringParameters(new HashMap<>());
         String requestString = JsonMapper.toJson(petstoreRequestEvent);
         if(logger.isTraceEnabled()) logger.trace("petstoreRequestEvent = {} to functionName {}", requestString, FUNCTION_NAME);

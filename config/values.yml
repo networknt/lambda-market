@@ -10,9 +10,16 @@ lambda-proxy.functions:
 
   /market/{store}/products@post: MarketStoreProductsPostFunction
 
+# token.yml
+token.enabled: true
+token.appliedPathPrefixes:
+  - /v1/pets
+
 # router.yml
 router.maxRequestTime: 120000
 router.metricsInjection: true
+router.urlRewriteRules:
+  - /v1/pets /Stage/v1/pets
 
 # client.yml
 client.verifyHostname: false

@@ -10,9 +10,9 @@ docker run --rm --name graal -v $(pwd):/working springci/graalvm-ce:master-java1
                     -H:ReflectionConfigurationFiles=/working/reflect.json \
                     -H:ResourceConfigurationFiles=/working/resource-config.json \
                     -H:+ReportExceptionStackTraces \
-                    -jar /working/build/libs/StoreProductsPostFunction-all.jar \
+                    -jar /working/build/libs/MarketStoreProductsGetFunction-all.jar \
                     ; \
-                    cp StoreProductsPostFunction-all /working/build/graalvm/server"
+                    cp MarketStoreProductsGetFunction-all /working/build/graalvm/server"
 
 mkdir -p build/graalvm
 if [ ! -f "build/graalvm/server" ]; then

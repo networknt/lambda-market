@@ -49,15 +49,15 @@ Resources:
 
   
   
-  StoreProductsGetFunction:
+  MarketStoreProductsGetFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       
-      CodeUri: StoreProductsGetFunction
+      CodeUri: MarketStoreProductsGetFunction
       Handler: com.networknt.market.handler.App::handleRequest
       Runtime: provided.al2023
       MemorySize: 512
-      FunctionName: StoreProductsGetFunction
+      FunctionName: MarketStoreProductsGetFunction
       Role: !Sub ${MarketFunctionRole.Arn}
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
@@ -65,15 +65,15 @@ Resources:
       
     
   
-  StoreProductsPostFunction:
+  MarketStoreProductsPostFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       
-      CodeUri: StoreProductsPostFunction
+      CodeUri: MarketStoreProductsPostFunction
       Handler: com.networknt.market.handler.App::handleRequest
       Runtime: provided.al2023
       MemorySize: 512
-      FunctionName: StoreProductsPostFunction
+      FunctionName: MarketStoreProductsPostFunction
       Role: !Sub ${MarketFunctionRole.Arn}
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
@@ -125,16 +125,16 @@ Resources:
             Path: /adm/logger
             Method: POST
         
-        StoreProductsGet:
+        MarketStoreProductsGet:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /{store}/products
+            Path: /market/{store}/products
             Method: GET
         
-        StoreProductsPost:
+        MarketStoreProductsPost:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /{store}/products
+            Path: /market/{store}/products
             Method: POST
         
   MarketConfigLayer:

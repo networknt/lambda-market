@@ -21,8 +21,8 @@ public class BusinessHandlerTest extends AppTest {
         // when running unit tests, there is no gateway authorizer and the token is not used.
         headers.put("Authorization", "Bearer ");
         request.setHeaders(headers);
-        request.setPath("/{store}/products");
-        request.setHttpMethod("GET");
+        request.setPath("/market/{store}/products");
+        request.setHttpMethod("POST");
         APIGatewayProxyRequestEvent.ProxyRequestContext context = new APIGatewayProxyRequestEvent.ProxyRequestContext();
         setEnv("AWS_REGION", "us-east-1");
         context.setAccountId("1234567890");
@@ -35,7 +35,7 @@ public class BusinessHandlerTest extends AppTest {
         request.setRequestContext(context);
         Map<String, Object> authorizerMap = new HashMap<>();
         // Simulate the authorizer to manually inject the primary token scopes for the scope verifier.
-        authorizerMap.put("primary_scopes", "read:products");
+        authorizerMap.put("primary_scopes", "read:products write:products");
         context.setAuthorizer(authorizerMap);
         APIGatewayProxyResponseEvent result = app.handleRequest(request, null);
         System.out.println(result.getBody());
@@ -54,8 +54,8 @@ public class BusinessHandlerTest extends AppTest {
         // when running unit tests, there is no gateway authorizer and the token is not used.
         headers.put("Authorization", "Bearer ");
         request.setHeaders(headers);
-        request.setPath("/{store}/products");
-        request.setHttpMethod("GET");
+        request.setPath("/market/{store}/products");
+        request.setHttpMethod("POST");
         APIGatewayProxyRequestEvent.ProxyRequestContext context = new APIGatewayProxyRequestEvent.ProxyRequestContext();
         setEnv("AWS_REGION", "us-east-1");
         context.setAccountId("1234567890");
@@ -68,7 +68,7 @@ public class BusinessHandlerTest extends AppTest {
         request.setRequestContext(context);
         Map<String, Object> authorizerMap = new HashMap<>();
         // Simulate the authorizer to manually inject the primary token scopes for the scope verifier.
-        authorizerMap.put("primary_scopes", "read:products");
+        authorizerMap.put("primary_scopes", "read:products write:products");
         context.setAuthorizer(authorizerMap);
         APIGatewayProxyResponseEvent result = app.handleRequest(request, null);
         System.out.println(result.getBody());

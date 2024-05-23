@@ -43,13 +43,12 @@ public class BusinessHandler {
     public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input, final Context context) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");
-        headers.put("Function-Name", "PetstoreNativeLambdaProxyFunction");
-
+        headers.put("service_id", "com.networknt.petstore-1.0.0");
 
         APIGatewayProxyRequestEvent petstoreRequestEvent = new APIGatewayProxyRequestEvent();
         petstoreRequestEvent.setHeaders(headers);
         petstoreRequestEvent.setHttpMethod("GET");
-        petstoreRequestEvent.setPath("/v1/pets");
+        petstoreRequestEvent.setPath("/Stage/v1/pets");
         petstoreRequestEvent.setQueryStringParameters(new HashMap<>());
         String requestString = JsonMapper.toJson(petstoreRequestEvent);
         if(logger.isTraceEnabled()) logger.trace("petstoreRequestEvent = {} to functionName {}", requestString, FUNCTION_NAME);

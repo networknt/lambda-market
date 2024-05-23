@@ -5,40 +5,14 @@
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
 
 
-- StoreProductsGetFunction/src/main - Code for the application's StoreProductsGetFunction Lambda function.
-- StoreProductsGetFunction/src/test - Unit tests for the application's StoreProductsGetFunction Lambda function.
+- MarketStoreProductsGetFunction/src/main - Code for the application's MarketStoreProductsGetFunction Lambda function.
+- MarketStoreProductsGetFunction/src/test - Unit tests for the application's MarketStoreProductsGetFunction Lambda function.
 
-- StoreProductsPostFunction/src/main - Code for the application's StoreProductsPostFunction Lambda function.
-- StoreProductsPostFunction/src/test - Unit tests for the application's StoreProductsPostFunction Lambda function.
+- MarketStoreProductsPostFunction/src/main - Code for the application's MarketStoreProductsPostFunction Lambda function.
+- MarketStoreProductsPostFunction/src/test - Unit tests for the application's MarketStoreProductsPostFunction Lambda function.
 
 - events - Invocation events that you can use to invoke each function.
 - template.yaml - A template that defines the application's AWS resources.
-- public-vpc.yaml or private-vpc.yaml - VPC cluster template depending on launchType EC2 or Fargate and private or public subnet configuration.
-- public-proxy.yaml or private-proxy.yaml - Lambda Proxy service template depending on the public subnet or private subnet.
-
-## Deploy the public VPC
-
-```
-aws cloudformation create-stack --stack-name {stack-name} --template-body file://public-vpc.yaml --capabilities CAPABILITY_IAM
-```
-
-Example
-
-```
-aws cloudformation create-stack --stack-name petstore-vpc --template-body file://public-vpc.yaml --capabilities CAPABILITY_IAM
-```
-
-## Deploy the private VPC
-
-```
-aws cloudformation create-stack --stack-name {stack-name} --template-body file://private-vpc.yaml --capabilities CAPABILITY_IAM
-```
-
-Example
-
-```
-aws cloudformation create-stack --stack-name petstore-vpc --template-body file://private-vpc.yaml --capabilities CAPABILITY_IAM
-```
 
 ## Describe stacks
 
@@ -51,26 +25,6 @@ aws cloudformation describe-stacks
 ```
 aws cloudformation delete-stack --stack-name {stack-name}
 ```
-
-
-## Deploy the Proxy
-
-```
-aws cloudformation create-stack \
-  --stack-name petstore-proxy \
-  --template-body file://public-proxy.yaml \
-  --parameters \
-      ParameterKey=StackName,ParameterValue=petstore-vpc \
-      ParameterKey=ServiceName,ParameterValue=lambda-proxy \
-      ParameterKey=ImageUrl,ParameterValue=964637446810.dkr.ecr.us-east-2.amazonaws.com/lambda-proxy:latest \
-      ParameterKey=ContainerPort,ParameterValue=8080 \
-      ParameterKey=HealthCheckPath,ParameterValue=/health/com.networknt.petstore-3.0.1 \
-      ParameterKey=HealthCheckIntervalSeconds,ParameterValue=90 \
-      ParameterKey=AccessKeyId,ParameterValue=AKIA6BGG7KKNEZY2XFNS \
-      ParameterKey=SecretAccessKey,ParameterValue=
-```
-
-
 
 The application uses several AWS resources, including Lambda functions and an API Gateway API. These resources are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates your application code.
 
@@ -126,9 +80,9 @@ Run functions locally and invoke them with the `sam local invoke` command.
 
 ```bash
 
-$ sam local invoke StoreProductsGetFunction --event events/eventStoreProductsGetFunction.json
+$ sam local invoke MarketStoreProductsGetFunction --event events/eventMarketStoreProductsGetFunction.json
 
-$ sam local invoke StoreProductsPostFunction --event events/eventStoreProductsPostFunction.json
+$ sam local invoke MarketStoreProductsPostFunction --event events/eventMarketStoreProductsPostFunction.json
 
 ```
 
@@ -144,16 +98,16 @@ The SAM CLI reads the application template to determine the API's routes and the
 ```yaml
       Events:
         
-        StoreProductsGetFunction:
+        MarketStoreProductsGetFunction:
           Type: Api
           Properties:
-            Path: //{store}/products
+            Path: //market/{store}/products
             Method: GET
         
-        StoreProductsPostFunction:
+        MarketStoreProductsPostFunction:
           Type: Api
           Properties:
-            Path: //{store}/products
+            Path: //market/{store}/products
             Method: POST
         
 ```
@@ -169,9 +123,9 @@ To simplify troubleshooting, SAM CLI has a command called `sam logs`. `sam logs`
 
 ```bash
 
-$ sam logs -n StoreProductsGetFunction --stack-name {stack-name} --tail
+$ sam logs -n MarketStoreProductsGetFunction --stack-name {stack-name} --tail
 
-$ sam logs -n StoreProductsPostFunction --stack-name {stack-name} --tail
+$ sam logs -n MarketStoreProductsPostFunction --stack-name {stack-name} --tail
 
 ```
 
@@ -183,10 +137,10 @@ Tests are defined in the `/src/test` folder for each function in this project.
 
 ```bash
 
-$ cd StoreProductsGetFunction
+$ cd MarketStoreProductsGetFunction
 $ mvn test
 
-$ cd StoreProductsPostFunction
+$ cd MarketStoreProductsPostFunction
 $ mvn test
 
 ```

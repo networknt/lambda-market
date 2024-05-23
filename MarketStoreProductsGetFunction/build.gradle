@@ -11,6 +11,7 @@ repositories {
         url 'https://oss.sonatype.org/content/repositories/snapshots/'
     }
 }
+
 configurations.all {
     exclude group:"software.amazon.awssdk", module: "netty-nio-client"
     exclude group:"software.amazon.awssdk", module: "apache-client"

@@ -6,26 +6,50 @@ lambda-app.lambdaAppId: com.networknt.market-1.0.1
 lambda-proxy.region: us-east-2
 lambda-proxy.functions:
 
-  /{store}/products@get: StoreProductsGetFunction
+  /market/{store}/products@get: MarketStoreProductsGetFunction
 
-  /{store}/products@post: StoreProductsPostFunction
+  /market/{store}/products@post: MarketStoreProductsPostFunction
 
-# lambda-router.yml
-lambda-router.enabled: true
-lambda-router.region: us-east-2
-lambda-router.functions:
-  /v1/pets@get: PetstoreNativeLambdaProxyFunction
+# router.yml
+router.maxRequestTime: 120000
+router.metricsInjection: true
 
-  /v1/pets@post: PetstoreNativeLambdaProxyFunction
+# client.yml
+client.verifyHostname: false
+client.multipleAuthServers: true
+client.pathPrefixServices:
+  /v1/pets: com.networknt.petstore-1.0.0
 
-  /v1/pets/{petId}@get: PetstoreNativeLambdaProxyFunction
+client.tokenCcServiceIdAuthServers:
+  com.networknt.petstore-1.0.0:
+    server_url: https://networknt.oktapreview.com
+    # set to true if the oauth2 provider supports HTTP/2
+    enableHttp2: false
+    # token endpoint for client credentials grant for petstore
+    uri: /oauth2/aus66u5cybtPRsbZs1d6/v1/token
+    # client_id for client credentials grant flow for petstore
+    client_id: 0oa66u56i8qXekMRQ1d6
+    client_secret: NotASecret
+    scope:
+      - pets.read
 
-  /v1/pets/{petId}@delete: PetstoreNativeLambdaProxyFunction
-  
+
 # service.yml
 service.singletons:
+  - com.networknt.registry.URL:
+    - com.networknt.registry.URLImpl
+  - com.networknt.registry.Registry:
+    - com.networknt.registry.support.DirectRegistry
+  - com.networknt.balance.LoadBalance:
+    - com.networknt.balance.RoundRobinLoadBalance
+  - com.networknt.cluster.Cluster:
+    - com.networknt.cluster.LightCluster
   - com.networknt.cache.CacheManager:
     - com.networknt.cache.CaffeineCacheManager
+
+# direct-registry.yml
+direct-registry.directUrls:
+  com.networknt.petstore-1.0.0: https://wlmkzamy2j.execute-api.us-east-2.amazonaws.com
 
 # cache.yml
 cache.caches:

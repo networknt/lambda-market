@@ -8,7 +8,7 @@ info:
 servers:
 - url: "http://market.swagger.io"
 paths:
-  /{store}/products:
+  /market/{store}/products:
     get:
       summary: "Get all products from stores"
       operationId: "listProducts"

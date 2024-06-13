@@ -33,10 +33,16 @@ public class BusinessHandler {
         headers.put("Content-Type", "application/json");
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent().withHeaders(headers);
         String output = "";
-        output = "{}";
+        output = "{\"id\":0,\"name\":\"product0\",\"price\":100,\"description\":\"This is a product description\"}";
         response.withStatusCode(200)
                 .withIsBase64Encoded(false)
                 .withBody(output);
+        // wait for 1 minutes to simulate the timeout to test the configurable timeout for the AwsSdk LambdaClient.
+        try {
+            Thread.sleep(60000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return response;
     }
 }

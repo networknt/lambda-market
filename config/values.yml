@@ -52,6 +52,7 @@ service.singletons:
   - com.networknt.cluster.Cluster:
     - com.networknt.cluster.LightCluster
   - com.networknt.cache.CacheManager:
+    # - com.networknt.aws.lambda.cache.DynamoDbCacheManager
     - com.networknt.cache.CaffeineCacheManager
 
 # direct-registry.yml
@@ -87,7 +88,8 @@ handler.handlers:
   # Light-framework cross-cutting concerns implemented in the microservice
   - com.networknt.aws.lambda.handler.middleware.correlation.CorrelationMiddleware@correlation
   - com.networknt.aws.lambda.handler.middleware.traceability.TraceabilityMiddleware@traceability
-  - com.networknt.aws.lambda.handler.middleware.header.HeaderMiddleware@header
+  - com.networknt.aws.lambda.handler.middleware.header.RequestHeaderMiddleware@requestHeader
+  - com.networknt.aws.lambda.handler.middleware.header.ResponseHeaderMiddleware@responseHeader
   - com.networknt.aws.lambda.handler.middleware.specification.OpenApiMiddleware@specification
   - com.networknt.aws.lambda.handler.middleware.proxy.LambdaProxyMiddleware@proxy
   - com.networknt.aws.lambda.handler.middleware.router.LambdaRouterMiddleware@router

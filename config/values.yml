@@ -4,6 +4,8 @@ lambda-app.lambdaAppId: com.networknt.market-1.0.1
 
 # lambda-proxy.yml
 lambda-proxy.region: us-east-2
+lambda-proxy.apiCallTimeout: 360000
+lambda-proxy.apiCallAttemptTimeout: 120000
 lambda-proxy.functions:
 
   /market/{store}/products@get: MarketStoreProductsGetFunction
@@ -23,9 +25,11 @@ router.urlRewriteRules:
 
 # client.yml
 client.verifyHostname: false
+client.timeout: 30000
 client.multipleAuthServers: true
 client.pathPrefixServices:
   /v1/pets: com.networknt.petstore-1.0.0
+  /market: com.networknt.market-1.0.0
 
 client.tokenCcServiceIdAuthServers:
   com.networknt.petstore-1.0.0:
@@ -40,6 +44,11 @@ client.tokenCcServiceIdAuthServers:
     scope:
       - pets.read
 
+client.tokenKeyServiceIdAuthServers:
+  com.networknt.market-1.0.0:
+    server_url: https://networknt.oktapreview.com
+    enableHttp2: false
+    uri: /oauth2/ausif8lcdDHDx1NA1d6/v1/keys
 
 # service.yml
 service.singletons:
@@ -77,8 +86,11 @@ security.enableVerifyJwt: false
 # unified-security.yml
 unified-security.enabled: false
 unified-security.pathPrefixAuths:
-  - prefix: /
+  - prefix: /market
     jwt: true
+# For simplify the test only.
+unified-security.anonymousPrefixes:
+  - /adm
 
 # header.yml
 header.enabled: true

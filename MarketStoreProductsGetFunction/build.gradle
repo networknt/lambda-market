@@ -1,7 +1,7 @@
 
 plugins {
     id 'java'
-    id "com.github.johnrengelman.shadow" version "5.2.0"
+    id "com.github.johnrengelman.shadow" version "${shadowPluginVersion}"
 }
 
 repositories {
@@ -18,16 +18,16 @@ configurations.all {
 }
 
 dependencies {
-    implementation "com.networknt:custom-runtime:$light4jVersion"
-    implementation "org.slf4j:slf4j-api:$slf4jVersion"
-    implementation "ch.qos.logback:logback-classic:$logbackVersion"
-    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-    implementation "com.amazonaws:aws-lambda-java-core:$lambdaCoreVersion"
-    implementation "com.amazonaws:aws-lambda-java-events:$lambdaEventsVersion"
-    implementation "software.amazon.awssdk:lambda:$lambdaAwsSdkVersion"
-    implementation "software.amazon.awssdk:url-connection-client:$lambdaAwsSdkVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    implementation "com.networknt:custom-runtime:${light4jVersion}"
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "ch.qos.logback:logback-classic:${logbackVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    implementation "com.amazonaws:aws-lambda-java-core:${lambdaCoreVersion}"
+    implementation "com.amazonaws:aws-lambda-java-events:${lambdaEventsVersion}"
+    implementation "software.amazon.awssdk:lambda:${lambdaAwsSdkVersion}"
+    implementation "software.amazon.awssdk:url-connection-client:${lambdaAwsSdkVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 }
 
 test {

@@ -5,12 +5,48 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BusinessHandlerTest extends AppTest {
+public class BusinessHandlerTest {
+
+    @Test
+    public void testFunctionQueryParams() {
+        App app = new App();
+        APIGatewayProxyRequestEvent request = new APIGatewayProxyRequestEvent();
+
+        // Create request with all valid query params
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("service_id", "my-service-id-0.0.1-SNAPSHOT");
+        queryParams.put("function_name", "MyFakeLambdaFunction");
+        queryParams.put("function_method", "GET");
+        queryParams.put("function_path", URLEncoder.encode("/path/to/resource", StandardCharsets.UTF_8));
+        request.setQueryStringParameters(queryParams);
+        request.setPath("/market/{store}/products");
+        request.setHttpMethod("GET");
+
+        // send a request, we should get '500' because the function is not real. We should pass all validation though.
+        var result1 = app.handleRequest(request, null);
+        System.out.println(result1.getBody());
+
+        assertEquals(500, result1.getStatusCode().intValue());
+        assertEquals("text/plain", result1.getHeaders().get("Content-Type"));
+
+        // re-use the previous request, just change the 'function_path' to an invalid path (not starting with /)
+        queryParams.put("function_path", URLEncoder.encode("non-valid-path", StandardCharsets.UTF_8));
+        request.setQueryStringParameters(queryParams);
+
+        // validation should return 400 here.
+        var result2 = app.handleRequest(request, null);
+        System.out.println(result1.getBody());
+        assertEquals(400, result2.getStatusCode().intValue());
+
+    }
 
     @Test
     @Disabled
@@ -24,7 +60,6 @@ public class BusinessHandlerTest extends AppTest {
         request.setPath("/market/{store}/products");
         request.setHttpMethod("GET");
         APIGatewayProxyRequestEvent.ProxyRequestContext context = new APIGatewayProxyRequestEvent.ProxyRequestContext();
-        setEnv("AWS_REGION", "us-east-1");
         context.setAccountId("1234567890");
         context.setStage("Prod");
         context.setApiId("gy415nuibc");
@@ -57,7 +92,6 @@ public class BusinessHandlerTest extends AppTest {
         request.setPath("/market/{store}/products");
         request.setHttpMethod("GET");
         APIGatewayProxyRequestEvent.ProxyRequestContext context = new APIGatewayProxyRequestEvent.ProxyRequestContext();
-        setEnv("AWS_REGION", "us-east-1");
         context.setAccountId("1234567890");
         context.setStage("Prod");
         context.setApiId("gy415nuibc");
